@@ -21,9 +21,13 @@ sudo chmod +x /usr/bin/BatchFDS.sh
 2. Navigate to the directory (e.g. `cd samples`)
 3. Run the script and pass the standard commands to start a FDS simulation (but without the inputfilename).
 ```bash
+# If you use FDS in a version older than 6.7.8, you have to set the environment variable OMP_NUM_THREADS to 1 before.
+export OMP_NUM_THREADS=1
+
 # Info: Please replace "-n <nr of meshes>" with with the actual number of your meshes, e.g. "-n 3"
 BatchFDS.sh mpiexec -n <nr of meshes> fds
 ```
+
 
 ## Computation
 * Depending on your configuration (e.g. CPU cores, number of meshes), the script will automatically decide how many simulations to start.
