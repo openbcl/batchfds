@@ -1,4 +1,4 @@
-# BatchFDS
+# BatchFDS for [Fire Dynamics Simulator](https://github.com/firemodels/fds)
 This script allows batch processing of FDS simulations on a single computer.
 All simulations must have the same number of meshes.
 The execution of FDS is done by MPI.
