@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=1.0.0
+VERSION=1.0.1
 PID=$$
 
 # Parse and print BatchFDS, FDS and MPI version
@@ -143,7 +143,7 @@ do
             rm "$outfolder/$taskID.exitcode"
         fi
         echo
-        echo "TASKS COMPLETED: $((++TASKS_COMPLETED)), TASKS TOTAL: $TASKS_ALL, PROGESS: $(( $TASKS_COMPLETED * 100 / $TASKS_ALL ))%"
+        echo "TASKS COMPLETED: $((++TASKS_COMPLETED)), TASKS TOTAL: $TASKS_ALL, PROGRESS: $(( $TASKS_COMPLETED * 100 / $TASKS_ALL ))%"
         echo
         runTask $@
         sleep 1
