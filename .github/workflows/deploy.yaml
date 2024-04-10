@@ -38,5 +38,5 @@ jobs:
           build-args: |
             FDS_VERSION=${{ inputs.tags }}
           push: true
-          tags: ${{ inputs.tags }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
