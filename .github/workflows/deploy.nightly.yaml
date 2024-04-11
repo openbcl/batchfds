@@ -1,8 +1,9 @@
 name: Deploy BatchFDS Nightly
 on:
+  repository_dispatch:
   workflow_dispatch:
     inputs:
-      tags:
+      tag:
         description: 'FDS version'
         required: true
         type: string
@@ -37,7 +38,7 @@ jobs:
           context: .
           file: Dockerfile.nightly
           build-args: |
-            FDS_VERSION=${{ inputs.tags }}
+            FDS_VERSION=${{ inputs.tag }}
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.tags }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.tag }}
           labels: ${{ steps.meta.outputs.labels }}

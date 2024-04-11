@@ -1,8 +1,9 @@
 name: Deploy BatchFDS
 on:
+  repository_dispatch:
   workflow_dispatch:
     inputs:
-      tags:
+      tag:
         description: 'FDS version'
         required: true
         type: string
@@ -36,7 +37,7 @@ jobs:
         with:
           context: .
           build-args: |
-            FDS_VERSION=${{ inputs.tags }}
+            FDS_VERSION=${{ inputs.tag }}
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.tags }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.tag }}
           labels: ${{ steps.meta.outputs.labels }}
