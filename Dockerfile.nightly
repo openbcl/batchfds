@@ -1,0 +1,10 @@
+# FDS version
+ARG FDS_VERSION
+
+# FDS base image
+FROM ghcr.io/openbcl/fds-nightly:${FDS_VERSION}
+
+# copy BatchFDS
+COPY src/BatchFDS.sh /usr/local/bin/
+
+ENTRYPOINT ["BatchFDS.sh"]

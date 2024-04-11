@@ -2,7 +2,7 @@
 ARG FDS_VERSION=latest
 
 # FDS base image
-FROM openbcl/fds:${FDS_VERSION}
+FROM ghcr.io/openbcl/fds:${FDS_VERSION}
 
 # copy BatchFDS
 COPY src/BatchFDS.sh /usr/local/bin/
