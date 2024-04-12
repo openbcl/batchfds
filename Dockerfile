@@ -5,9 +5,6 @@ ARG FDS_VERSION=latest
 FROM ghcr.io/openbcl/fds:${FDS_VERSION}
 
 # copy BatchFDS
-COPY src/BatchFDS.sh /usr/local/bin/
-
-# make BatchFDS executable
-RUN chmod +x /usr/local/bin/BatchFDS.sh
+COPY --chmod=755 src/BatchFDS.sh /usr/local/bin/
 
 ENTRYPOINT ["BatchFDS.sh"]
