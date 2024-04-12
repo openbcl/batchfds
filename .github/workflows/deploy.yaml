@@ -9,14 +9,18 @@ on:
         type: string
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: batchfds
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    env:
+      IS_LATEST: false
     permissions:
       contents: read
       packages: write
     steps:
+      - name: Extract image name
+        run: echo "BASE=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}" >>  $GITHUB_ENV
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -31,7 +35,35 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${BASE}
+      - name: Check if new build version is latest
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REGEX=[0-9]+\.[0-9]+\.[0-9]
+          LATEST_VERSION=0.0.0
+          version_greater_equal()
+          {
+            printf '%s\n%s\n' "$2" "$1" | sort --check=quiet --version-sort
+          }
+          VERSIONS=$(curl --silent "https://api.github.com/users/${{ github.repository_owner }}/packages/container/${{ env.IMAGE_NAME }}/versions"  --stderr - \
+            --header "Authorization: Bearer ${TOKEN}" | \
+            grep -E "[[:space:]]+\"${REGEX}\"" | grep -oEi ${REGEX})
+          for VERSION in $VERSIONS; do
+            version_greater_equal $VERSION $LATEST_VERSION && LATEST_VERSION=$VERSION
+          done
+          if version_greater_equal ${{ inputs.tag }} ${LATEST_VERSION}
+          then
+            echo "IS_LATEST=true" >> $GITHUB_ENV
+          fi
+      - name: Set Tags
+        run: |
+          if [[ ${{ env.IS_LATEST }} == true ]]
+          then
+            echo "TAGS=${BASE}:${{ inputs.tag }},${BASE}:latest" >> $GITHUB_ENV
+          else
+            echo "TAGS=${BASE}:${{ inputs.tag }}" >> $GITHUB_ENV
+          fi
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -39,5 +71,5 @@ jobs:
           build-args: |
             FDS_VERSION=${{ inputs.tag }}
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.tag }}
+          tags: ${{ env.TAGS }}
           labels: ${{ steps.meta.outputs.labels }}
