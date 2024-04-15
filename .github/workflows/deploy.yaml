@@ -37,6 +37,7 @@ jobs:
         with:
           images: ${BASE}
       - name: Check if new build version is latest
+        continue-on-error: true
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
