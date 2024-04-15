@@ -70,6 +70,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          provenance: false
           build-args: |
             FDS_VERSION=${{ inputs.tag }}
           push: true

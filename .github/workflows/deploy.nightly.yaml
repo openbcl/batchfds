@@ -38,6 +38,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          provenance: false
           file: Dockerfile.nightly
           build-args: |
             FDS_VERSION=${{ inputs.tag }}
