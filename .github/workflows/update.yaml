@@ -6,7 +6,7 @@ on:
     paths:
       - 'src/*.sh'
       - '.dockerignore'
-      - 'Dockerfile*'
+      - 'Dockerfile'
 env:
   IMAGE_NAME: batchfds
 jobs:
