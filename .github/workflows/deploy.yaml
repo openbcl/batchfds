@@ -14,7 +14,7 @@ jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
     env:
-      IS_LATEST: false
+      IS_LATEST: true
     permissions:
       contents: read
       packages: write
@@ -38,24 +38,18 @@ jobs:
           images: ${BASE}
       - name: Check if new build version is latest
         continue-on-error: true
-        env:
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           REGEX=[0-9]+\.[0-9]+\.[0-9]+
           LATEST_VERSION=0.0.0
-          version_greater_equal()
-          {
-            printf '%s\n%s\n' "$2" "$1" | sort --check=quiet --version-sort
-          }
           VERSIONS=$(curl --silent "https://api.github.com/users/${{ github.repository_owner }}/packages/container/${{ env.IMAGE_NAME }}/versions" --stderr - \
-            --header "Authorization: Bearer ${TOKEN}" | \
+            --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" | \
             grep -E "[[:space:]]+\"${REGEX}\"" | grep -oEi ${REGEX})
           for VERSION in $VERSIONS; do
-            version_greater_equal $VERSION $LATEST_VERSION && LATEST_VERSION=$VERSION
+            [ "$VERSION" \> "$LATEST_VERSION" ] && LATEST_VERSION=$VERSION
           done
-          if version_greater_equal ${{ inputs.tag }} ${LATEST_VERSION}
+          if [ "${{ inputs.tag }}" \< "${LATEST_VERSION}" ]
           then
-            echo "IS_LATEST=true" >> $GITHUB_ENV
+            echo "IS_LATEST=false" >> $GITHUB_ENV
           fi
       - name: Set Tags
         run: |
